@@ -1,4 +1,4 @@
-<%@ page import="java.util.*" %>
+<%@ page import="java.util.*, model.Coupon" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -73,7 +73,7 @@
     <h2>All Coupons</h2>
 
     <%
-        List<Map<String, Object>> coupons = (List<Map<String, Object>>) request.getAttribute("coupons");
+        List<Coupon> coupons = (List<Coupon>) request.getAttribute("coupons");
         if (coupons != null && !coupons.isEmpty()) {
     %>
         <table>
@@ -81,22 +81,24 @@
                 <th>Code</th>
                 <th>Description</th>
                 <th>Discount %</th>
+                <th>Min Total Price (RM)</th>
                 <th>Start</th>
                 <th>End</th>
                 <th>Action</th>
             </tr>
             <%
-                for (Map<String, Object> coupon : coupons) {
+                for (Coupon coupon : coupons) {
             %>
             <tr>
-                <td><%= coupon.get("code") %></td>
-                <td><%= coupon.get("description") %></td>
-                <td><%= coupon.get("discount") %></td>
-                <td><%= coupon.get("start") %></td>
-                <td><%= coupon.get("end") %></td>
+                <td><%= coupon.getCouponCode() %></td>
+                <td><%= coupon.getCouponDescription() %></td>
+                <td><%= coupon.getDiscountPercentage() %></td>
+                <td><%= String.format("%.2f", coupon.getTotalPrice()) %></td>
+                <td><%= coupon.getStartDate() %></td>
+                <td><%= coupon.getEndDate() %></td>
                 <td>
                     <form method="post" action="DeleteCouponServlet">
-                        <input type="hidden" name="coupon_id" value="<%= coupon.get("id") %>">
+                        <input type="hidden" name="coupon_id" value="<%= coupon.getCouponId() %>">
                         <input type="submit" value="Delete">
                     </form>
                 </td>

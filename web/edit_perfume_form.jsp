@@ -1,7 +1,8 @@
+<%@ page import="model.Perfume" %>
 <%@ page import="java.util.*" %>
 <%
-    Map<String, String> perfume = (Map<String, String>) request.getAttribute("perfume");
-    List<Map<String, String>> categories = (List<Map<String, String>>) request.getAttribute("categories");
+    Perfume perfume = (Perfume) request.getAttribute("perfume");
+    List<Perfume> categories = (List<Perfume>) request.getAttribute("categories");
 %>
 <!DOCTYPE html>
 <html>
@@ -60,26 +61,26 @@
 <body>
     <form class="edit-box" action="UpdatePerfumeServlet" method="post" enctype="multipart/form-data">
         <h2>Edit Perfume</h2>
-        <input type="hidden" name="perfume_id" value="<%= perfume.get("id") %>">
-        <input type="hidden" name="old_image" value="<%= perfume.get("image") %>">
+        <input type="hidden" name="perfume_id" value="<%= perfume.getPerfumeId() %>">
+        <input type="hidden" name="old_image" value="<%= perfume.getImageUrl() %>">
 
-        <input type="text" name="perfume_name" value="<%= perfume.get("name") %>" placeholder="Name" required>
+        <input type="text" name="perfume_name" value="<%= perfume.getPerfumeName() %>" placeholder="Name" required>
 
         <select name="category_id" required>
-            <% for (Map<String, String> category : categories) { 
-                String selected = category.get("id").equals(perfume.get("category")) ? "selected" : "";
+            <% for (Perfume category : categories) { 
+                String selected = category.getCategoryId() == perfume.getCategoryId() ? "selected" : "";
             %>
-                <option value="<%= category.get("id") %>" <%= selected %>><%= category.get("name") %></option>
+                <option value="<%= category.getCategoryId() %>" <%= selected %>><%= category.getCategoryName() %></option>
             <% } %>
         </select>
 
-        <input type="text" name="price" value="<%= perfume.get("price") %>" placeholder="Price" required>
-        <input type="number" name="stock" value="<%= perfume.get("stock") %>" placeholder="Stock" required>
-        <textarea name="description" rows="3" placeholder="Description"><%= perfume.get("description") %></textarea>
+        <input type="text" name="price" value="<%= perfume.getPrice() %>" placeholder="Price" required>
+        <input type="number" name="stock" value="<%= perfume.getStock() %>" placeholder="Stock" required>
+        <textarea name="description" rows="3" placeholder="Description"><%= perfume.getDescription() %></textarea>
 
         <div class="image-preview">
             <p>Current Image:</p>
-            <img src="<%= request.getContextPath() + "/" + perfume.get("image") %>" alt="Perfume Image">
+            <img src="<%= request.getContextPath() + "/" + perfume.getImageUrl() %>" alt="Perfume Image">
         </div>
 
         <input type="file" name="image_file" accept="image/*">

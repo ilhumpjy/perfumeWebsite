@@ -1,6 +1,7 @@
+<%@ page import="model.Perfume" %>
 <%@ page import="java.util.*" %>
 <%
-    List<Map<String, String>> perfumeList = (List<Map<String, String>>) request.getAttribute("perfumeList");
+    List<Perfume> perfumeList = (List<Perfume>) request.getAttribute("perfumeList");
 %>
 <!DOCTYPE html>
 <html>
@@ -30,18 +31,18 @@
     <th>Delete</th>
 </tr>
 
-<% for (Map<String, String> perfume : perfumeList) { %>
+<% for (Perfume perfume : perfumeList) { %>
 <tr>
-    <td><%= perfume.get("id") %></td>
-    <td><%= perfume.get("name") %></td>
-    <td><%= perfume.get("category") %></td>
-    <td><%= perfume.get("price") %></td>
-    <td><%= perfume.get("stock") %></td>
+    <td><%= perfume.getPerfumeId() %></td>
+    <td><%= perfume.getPerfumeName() %></td>
+    <td><%= perfume.getCategoryId() %></td> <!-- Kalau ada getCategoryName() boleh guna nama kategori -->
+    <td><%= perfume.getPrice() %></td>
+    <td><%= perfume.getStock() %></td>
 
     <!-- Edit Button -->
     <td>
         <form method="post" action="EditPerfumeDetailsServlet">
-            <input type="hidden" name="perfume_id" value="<%= perfume.get("id") %>">
+            <input type="hidden" name="perfume_id" value="<%= perfume.getPerfumeId() %>">
             <input type="submit" value="Edit">
         </form>
     </td>
@@ -49,8 +50,8 @@
     <!-- Delete Button -->
     <td>
         <form method="post" action="DeletePerfumeServlet" onsubmit="return confirm('Are you sure you want to delete this perfume?');">
-            <input type="hidden" name="perfume_id" value="<%= perfume.get("id") %>">
-            <input type="hidden" name="old_image" value="<%= perfume.get("image") != null ? perfume.get("image") : "" %>">
+            <input type="hidden" name="perfume_id" value="<%= perfume.getPerfumeId() %>">
+            <input type="hidden" name="old_image" value="<%= perfume.getImageUrl() != null ? perfume.getImageUrl() : "" %>">
             <input type="submit" class="delete-btn" value="Delete">
         </form>
     </td>

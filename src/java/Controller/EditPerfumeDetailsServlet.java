@@ -5,6 +5,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.*;
 import java.util.*;
+import model.Perfume;
 
 public class EditPerfumeDetailsServlet extends HttpServlet {
 
@@ -13,8 +14,8 @@ public class EditPerfumeDetailsServlet extends HttpServlet {
         throws ServletException, IOException {
 
         int perfumeId = Integer.parseInt(request.getParameter("perfume_id"));
-        Map<String, String> perfume = new HashMap<>();
-        List<Map<String, String>> categories = new ArrayList<>();
+        Perfume perfume = new Perfume();
+        List<Perfume> categories = new ArrayList<>(); // Guna Perfume untuk simpan category info (categoryId & categoryName)
 
         try {
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -27,13 +28,13 @@ public class EditPerfumeDetailsServlet extends HttpServlet {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                perfume.put("id", rs.getString("perfume_id"));
-                perfume.put("name", rs.getString("perfume_name"));
-                perfume.put("category", rs.getString("category_id"));
-                perfume.put("price", rs.getString("price"));
-                perfume.put("stock", rs.getString("stock"));
-                perfume.put("description", rs.getString("description"));
-                perfume.put("image", rs.getString("image_url")); // <-- untuk fallback gambar lama
+                perfume.setPerfumeId(rs.getInt("perfume_id"));
+                perfume.setPerfumeName(rs.getString("perfume_name"));
+                perfume.setCategoryId(rs.getInt("category_id"));
+                perfume.setPrice(rs.getDouble("price"));
+                perfume.setStock(rs.getInt("stock"));
+                perfume.setDescription(rs.getString("description"));
+                perfume.setImageUrl(rs.getString("image_url")); // fallback gambar lama
             }
 
             // Get all categories
@@ -42,9 +43,9 @@ public class EditPerfumeDetailsServlet extends HttpServlet {
             ResultSet catRs = catStmt.executeQuery(catSql);
 
             while (catRs.next()) {
-                Map<String, String> category = new HashMap<>();
-                category.put("id", catRs.getString("category_id"));
-                category.put("name", catRs.getString("category_name"));
+                Perfume category = new Perfume();
+                category.setCategoryId(catRs.getInt("category_id"));
+                category.setCategoryName(catRs.getString("category_name"));
                 categories.add(category);
             }
 

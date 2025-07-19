@@ -2,29 +2,28 @@ package model;
 
 public class Perfume {
     private int perfumeId;
-    private int quantity;
     private String perfumeName;
-    private String categoryName;
+    private int categoryId;
+    private String categoryName; // Optional: untuk display kategori dengan nama
     private String description;
     private double price;
     private int stock;
     private String imageUrl;
+    private int quantity; // Untuk shopping cart
+
+    // Constructors
+    public Perfume() {
+        // Empty constructor
+    }
 
     // Getters & Setters
+
     public int getPerfumeId() {
         return perfumeId;
     }
 
     public void setPerfumeId(int perfumeId) {
         this.perfumeId = perfumeId;
-    }
-    
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int perfumeId) {
-        this.quantity = quantity;
     }
 
     public String getPerfumeName() {
@@ -33,6 +32,14 @@ public class Perfume {
 
     public void setPerfumeName(String perfumeName) {
         this.perfumeName = perfumeName;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getCategoryName() {
@@ -73,5 +80,13 @@ public class Perfume {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

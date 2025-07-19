@@ -1,8 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%
-    Double amount = (Double) request.getAttribute("finalAmount");
-    Double discount = (Double) request.getAttribute("discount");
-    Integer orderId = (Integer) request.getAttribute("orderId");
+    String amountStr = (String) session.getAttribute("finalTotal");
+    String discountStr = (String) session.getAttribute("discount");
+    String method = (String) session.getAttribute("paymentMethod");
+    Integer orderId = (Integer) session.getAttribute("orderId");
+
+    Double amount = Double.parseDouble(amountStr);
+    Double discount = Double.parseDouble(discountStr);
 %>
 <!DOCTYPE html>
 <html>
@@ -69,11 +73,19 @@
 <body>
     <div class="container">
         <h1>Thank You for Your Purchase!</h1>
-        <p>Your order ID is <strong><%= orderId %></strong>.</p>
-        <% if (discount > 0) { %>
-            <p class="highlight">Discount Applied: <%= discount %>% off</p>
+
+        <% if (orderId != null) { %>
+            <p>Your Order ID is <strong><%= orderId %></strong></p>
         <% } %>
+
+        <p>Payment Method: <strong><%= method %></strong></p>
+
+        <% if (discount > 0) { %>
+            <p class="highlight">Discount Applied: RM <%= String.format("%.2f", discount) %></p>
+        <% } %>
+
         <p>Total Paid: <strong>RM <%= String.format("%.2f", amount) %></strong></p>
+
         <a href="ShopServlet" class="btn">Continue Shopping</a>
     </div>
 </body>

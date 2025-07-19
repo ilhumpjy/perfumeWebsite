@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
-<%@ page import="java.util.*, model.Perfume" %>
+<%@ page import="java.util.*, model.Perfume, model.Category" %>
 <%
     List<Perfume> perfumeList = (List<Perfume>) request.getAttribute("perfumeList");
+    List<Category> categoryList = (List<Category>) request.getAttribute("categoryList");
     String selectedCategory = (String) request.getAttribute("selectedCategory");
 %>
 <!DOCTYPE html>
@@ -42,29 +43,31 @@
             color: #222;
         }
 
-        .filter-buttons {
+        .filter-dropdown {
             text-align: center;
             margin: 30px 0 20px;
         }
 
-        .filter-buttons form {
-            display: inline-block;
-            margin: 0 10px;
+        .styled-select {
+            padding: 12px 25px;
+            font-size: 15px;
+            border: 2px solid #b8955d;
+            border-radius: 12px;
+            background-color: #fffaf5;
+            color: #444;
+            font-family: 'Roboto', sans-serif;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
 
-        .filter-buttons button {
-            background-color: #b8955d;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
+        .styled-select:hover {
+            border-color: #9f7a3a;
+            background-color: #fff5ec;
         }
 
-        .filter-buttons button:hover {
-            background-color: #9f7a3a;
+        .styled-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(184, 149, 93, 0.3);
         }
 
         .container {
@@ -116,26 +119,17 @@
         footer {
             text-align: center;
             padding: 30px 0;
-            font-size: 14px;
-            color: #aaa;
+            font-size: 14px; color: #aaa;
         }
 
         #loadingOverlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(255,255,255,0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center;
         }
 
         .spinner {
-            border: 8px solid #eee;
-            border-top: 8px solid #b8955d;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            border: 8px solid #eee; border-top: 8px solid #b8955d;
+            border-radius: 50%; width: 60px; height: 60px;
             animation: spin 1s linear infinite;
         }
 
@@ -164,18 +158,20 @@
     <%= selectedCategory != null ? selectedCategory + " Perfumes" : "Explore Our Signature Perfume Collection" %>
 </h2>
 
-<div class="filter-buttons">
+<div class="filter-dropdown">
     <form method="get" action="ShopServlet">
-        <input type="hidden" name="category" value="Men">
-        <button type="submit">Men</button>
-    </form>
-    <form method="get" action="ShopServlet">
-        <input type="hidden" name="category" value="Women">
-        <button type="submit">Women</button>
-    </form>
-    <form method="get" action="ShopServlet">
-        <input type="hidden" name="category" value="Unisex">
-        <button type="submit">Couples</button>
+        <label style="font-size:16px; margin-right:10px; font-family:'Playfair Display', serif; color:#444;">
+            Category:
+        </label>
+        <select name="category" onchange="this.form.submit()" class="styled-select">
+            <option value="">All Categories</option>
+            <% for (Category c : categoryList) { %>
+                <option value="<%= c.getCategoryName() %>"
+                <%= selectedCategory != null && selectedCategory.equals(c.getCategoryName()) ? "selected" : "" %>>
+                    <%= c.getCategoryName() %>
+                </option>
+            <% } %>
+        </select>
     </form>
 </div>
 
@@ -223,8 +219,7 @@ function addToCart(event, perfumeId) {
             title: 'Added to cart!',
             timer: 1300,
             showConfirmButton: false,
-            background: '#fff0f5',
-            customClass: { popup: 'swal2-sm' }
+            background: '#fff0f5'
         });
     })
     .catch(() => {

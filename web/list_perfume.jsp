@@ -1,6 +1,6 @@
-<%@ page import="java.util.*, java.text.DecimalFormat" %>
+<%@ page import="java.util.*, java.text.DecimalFormat, model.Perfume" %>
 <%
-    List<Map<String, Object>> perfumes = (List<Map<String, Object>>) request.getAttribute("perfumes");
+    List<Perfume> perfumes = (List<Perfume>) request.getAttribute("perfumes");
     DecimalFormat df = new DecimalFormat("0.00");
 %>
 <!DOCTYPE html>
@@ -21,19 +21,27 @@
 <h1 style="text-align:center;">All Perfumes</h1>
 <table>
 <tr>
-    <th>ID</th><th>Name</th><th>Category ID</th><th>Price</th><th>Stock</th><th>Description</th><th>Image</th>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Category ID</th>
+    <th>Price</th>
+    <th>Stock</th>
+    <th>Description</th>
+    <th>Image</th>
 </tr>
-<% for (Map<String, Object> p : perfumes) { %>
+
+<% for (Perfume p : perfumes) { %>
 <tr>
-    <td><%= p.get("id") %></td>
-    <td><%= p.get("name") %></td>
-    <td><%= p.get("category") %></td>
-    <td>RM <%= df.format(p.get("price")) %></td>
-    <td><%= p.get("stock") %></td>
-    <td><%= p.get("description") %></td>
-    <td><img src="<%= request.getContextPath() %>/<%= p.get("image") %>" alt="Image"></td>
+    <td><%= p.getPerfumeId() %></td>
+    <td><%= p.getPerfumeName() %></td>
+    <td><%= p.getCategoryId() %></td>
+    <td>RM <%= df.format(p.getPrice()) %></td>
+    <td><%= p.getStock() %></td>
+    <td><%= p.getDescription() %></td>
+    <td><img src="<%= request.getContextPath() %>/<%= p.getImageUrl() %>" alt="Image"></td>
 </tr>
 <% } %>
+
 </table>
 
 <div class="back">

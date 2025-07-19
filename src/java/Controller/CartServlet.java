@@ -16,7 +16,7 @@ public class CartServlet extends HttpServlet {
 
         // 🟡 Redirect if not logged in
         if (userId == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("UserLogin.jsp");
             return;
         }
 

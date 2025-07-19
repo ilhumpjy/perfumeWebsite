@@ -5,13 +5,14 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import model.Perfume;
 
 public class ListPerfumeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<Map<String, Object>> perfumeList = new ArrayList<>();
+        List<Perfume> perfumeList = new ArrayList<>();
 
         try {
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -22,14 +23,15 @@ public class ListPerfumeServlet extends HttpServlet {
             ResultSet rs = stmt.executeQuery("SELECT * FROM Perfume");
 
             while (rs.next()) {
-                Map<String, Object> perfume = new HashMap<>();
-                perfume.put("id", rs.getInt("perfume_id"));
-                perfume.put("name", rs.getString("perfume_name"));
-                perfume.put("category", rs.getInt("category_id"));
-                perfume.put("price", rs.getDouble("price"));
-                perfume.put("stock", rs.getInt("stock"));
-                perfume.put("description", rs.getString("description"));
-                perfume.put("image", rs.getString("image_url"));
+                Perfume perfume = new Perfume();
+                perfume.setPerfumeId(rs.getInt("perfume_id"));
+                perfume.setPerfumeName(rs.getString("perfume_name"));
+                perfume.setCategoryId(rs.getInt("category_id"));
+                perfume.setPrice(rs.getDouble("price"));
+                perfume.setStock(rs.getInt("stock"));
+                perfume.setDescription(rs.getString("description"));
+                perfume.setImageUrl(rs.getString("image_url"));
+
                 perfumeList.add(perfume);
             }
 

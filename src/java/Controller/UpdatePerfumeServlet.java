@@ -1,5 +1,6 @@
 package controller;
 
+import model.Perfume;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -14,35 +15,38 @@ public class UpdatePerfumeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
 
-        // Ambil data dari form
-        int perfumeId = Integer.parseInt(request.getParameter("perfume_id"));
-        String name = request.getParameter("perfume_name");
-        int categoryId = Integer.parseInt(request.getParameter("category_id"));
-        double price = Double.parseDouble(request.getParameter("price"));
-        int stock = Integer.parseInt(request.getParameter("stock"));
-        String description = request.getParameter("description");
-        String oldImage = request.getParameter("old_image"); // Untuk fallback gambar lama
+        // Create perfume object & isi data dari form
+        Perfume perfume = new Perfume();
 
-        // Check sama ada admin upload gambar baru atau tidak
+        perfume.setPerfumeId(Integer.parseInt(request.getParameter("perfume_id")));
+        perfume.setPerfumeName(request.getParameter("perfume_name"));
+        perfume.setCategoryId(Integer.parseInt(request.getParameter("category_id")));
+        perfume.setPrice(Double.parseDouble(request.getParameter("price")));
+        perfume.setStock(Integer.parseInt(request.getParameter("stock")));
+        perfume.setDescription(request.getParameter("description"));
+
+        String oldImage = request.getParameter("old_image");
+        perfume.setImageUrl(oldImage); // Set dulu gambar lama
+
+        // Handle gambar baru kalau ada
         Part filePart = request.getPart("image_file");
-        String imageUrl = oldImage;
-
         if (filePart != null && filePart.getSize() > 0) {
-            // Ada gambar baru diupload
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            String uploadDir = getServletContext().getRealPath("") + "images";
-            File dir = new File(uploadDir);
+
+            String imagesDir = getServletContext().getRealPath("/images");
+            File dir = new File(imagesDir);
             if (!dir.exists()) dir.mkdirs();
 
-            String uploadPath = uploadDir + File.separator + fileName;
+            String uploadPath = imagesDir + File.separator + fileName;
+
             try (InputStream input = filePart.getInputStream()) {
                 Files.copy(input, Paths.get(uploadPath), StandardCopyOption.REPLACE_EXISTING);
             }
 
-            imageUrl = "images/" + fileName; // Update image path
+            perfume.setImageUrl("images/" + fileName); // Overwrite dengan gambar baru
         }
 
-        // Update ke DB
+        // Update ke DB guna data dari perfume object
         try {
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             Connection conn = DriverManager.getConnection(
@@ -51,22 +55,25 @@ public class UpdatePerfumeServlet extends HttpServlet {
             String sql = "UPDATE Perfume SET perfume_name = ?, category_id = ?, price = ?, stock = ?, description = ?, image_url = ? WHERE perfume_id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
 
-            stmt.setString(1, name);
-            stmt.setInt(2, categoryId);
-            stmt.setDouble(3, price);
-            stmt.setInt(4, stock);
-            stmt.setString(5, description);
-            stmt.setString(6, imageUrl);
-            stmt.setInt(7, perfumeId);
+            stmt.setString(1, perfume.getPerfumeName());
+            stmt.setInt(2, perfume.getCategoryId());
+            stmt.setDouble(3, perfume.getPrice());
+            stmt.setInt(4, perfume.getStock());
+            stmt.setString(5, perfume.getDescription());
+            stmt.setString(6, perfume.getImageUrl());
+            stmt.setInt(7, perfume.getPerfumeId());
 
             stmt.executeUpdate();
+
             conn.close();
 
         } catch (Exception e) {
             e.printStackTrace();
+            response.getWriter().println("Error updating perfume: " + e.getMessage());
+            return;
         }
 
-        // Redirect ke EditPerfumeServlet (list view)
+        // Redirect ke list view
         response.sendRedirect("EditPerfumeServlet");
     }
 }
